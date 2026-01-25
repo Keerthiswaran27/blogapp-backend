@@ -1,0 +1,23 @@
+# Build outputs
+bin/
+obj/
+
+# User-specific files
+*.csproj.user
+*.suo
+
+# IDEs
+.vs/
+.vscode/
+.idea/
+
+# Environment / secrets
+appsettings.Development.json
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
