@@ -5,11 +5,14 @@ using Qdrant.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+var frontend_url = builder.Configuration["Frontend:Url"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowBlazorClient", policy =>
     {
-        policy.WithOrigins("https://localhost:7028") // Your WASM base URL
+        policy.WithOrigins(frontend_url) // Your WASM base URL
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -18,9 +21,10 @@ builder.Services.AddCors(options =>
 // ? Register HttpClient for DI before building the app
 builder.Services.AddHttpClient();
 
+var ollama_url = builder.Configuration["Ollama:BaseUrl"];
 builder.Services.AddHttpClient("Ollama", client =>
 {
-    client.BaseAddress = new Uri("http://localhost:11434"); // Ollama default
+    client.BaseAddress = new Uri(ollama_url); // Ollama default
 });
 
 
@@ -31,7 +35,9 @@ builder.Services.AddSwaggerGen();
 
 // ? Supabase setup
 var url = builder.Configuration["Supabase:Url"];       // from appsettings.json
-var key = builder.Configuration["Supabase:Key"];       // service role or anon key
+var key = builder.Configuration["Supabase:Key"];     
+var qdrant_url = builder.Configuration["Qdrant:url"];     
+var qdrant_apikey = builder.Configuration["Qdrant:Apikey"];     
 
 var supabaseOptions = new SupabaseOptions
 {
@@ -44,10 +50,10 @@ var supabase = new Supabase.Client(url, key, supabaseOptions);
 // Register Supabase in DI
 builder.Services.AddSingleton(supabase);
 builder.Services.AddSingleton(new QdrantClient(
-    host: "769593f4-dabf-4352-822f-7b913459b584.europe-west3-0.gcp.cloud.qdrant.io",
+    host: qdrant_url,
     port: 6334,
     https: true,
-    apiKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.Clj2wOfjzjRBQARnYl6TX355LErC4N0q4C-OuWTxrc8"
+    apiKey: qdrant_apikey
 ));
 builder.Services.AddHttpClient<GeminiService>();
 builder.Services.AddSingleton<RAGIngestionService>();

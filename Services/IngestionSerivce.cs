@@ -64,7 +64,7 @@ public class IngestionService
         );
 
         var response = await http.PostAsync(
-            "http://localhost:8000/embed",
+            "https://blogapp-embedding-service-2.onrender.com/embed",
             content);
 
         var result = await response.Content.ReadAsStringAsync();

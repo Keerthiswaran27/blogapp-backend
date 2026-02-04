@@ -1,6 +1,7 @@
 ﻿using BlogApp1.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Qdrant.Client.Grpc;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 
@@ -12,16 +13,18 @@ namespace BlogApp1.Server.Controllers
     {
         private readonly HttpClient _http;
 
-        private const string GEMINI_API_KEY = "AIzaSyBT4UFf1dEz_AhNBNXO26e_PEGfacBTq8k";
+        private readonly string GEMINI_API_KEY = "";
+
+        public BlogAiController(HttpClient httpClient, IConfiguration config)
+        {
+            _http = httpClient;
+            GEMINI_API_KEY = config["Gemini:ApiKey1"] ?? throw new ArgumentNullException("Missing Gemini:ApiKey");
+        }
 
         // Use stable model
         private const string MODEL =
             "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=";
 
-        public BlogAiController()
-        {
-            _http = new HttpClient();
-        }
 
         [HttpPost("generate")]
         public async Task<IActionResult> GenerateBlog(
