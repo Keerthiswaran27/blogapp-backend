@@ -6,7 +6,7 @@ using Qdrant.Client;
 var builder = WebApplication.CreateBuilder(args);
 
 
-var frontend_url = builder.Configuration["Frontend:Url"];
+var frontend_url = builder.Configuration["Frontend:Url"] ?? "http://localhost:7028";
 
 builder.Services.AddCors(options =>
 {
@@ -68,7 +68,7 @@ var app = builder.Build();
 app.UseCors("AllowBlazorClient");
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -76,7 +76,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllers();
 
