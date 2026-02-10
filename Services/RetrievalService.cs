@@ -18,9 +18,7 @@ namespace BlogApp1.Server.Services
             _qdrant = qdrant;
         }
 
-        public async Task<List<RagChunkResult>> RetrieveAsync(
-            string query,
-            float[] queryVector)
+        public async Task<List<RagChunkResult>> RetrieveAsync(string query,float[] queryVector)
         {
             // 1️⃣ Dense ANN
             var dense = await DenseSearch(queryVector, 20);
@@ -37,14 +35,13 @@ namespace BlogApp1.Server.Services
             // 5️⃣ Final re-rank after merge
             var finalRanked = await Rerank(query, merged);
 
-            return finalRanked.Take(5).ToList();
+            return finalRanked.Take(4).ToList();
         }
 
         // ---------------- METHODS ----------------
 
         // Dense ANN
-        private async Task<List<RagChunkResult>>
-            DenseSearch(float[] vector, int limit)
+        private async Task<List<RagChunkResult>> DenseSearch(float[] vector, int limit)
         {
             var res = await _qdrant.SearchAsync(
                 collectionName: COLLECTION,
@@ -61,8 +58,7 @@ namespace BlogApp1.Server.Services
         }
 
         // 🔥 Re-ranking (simple cross scoring for now)
-        private async Task<List<RagChunkResult>>
-            Rerank(string query,
+        private async Task<List<RagChunkResult>> Rerank(string query,
                    List<RagChunkResult> chunks)
         {
             // temporary logic:
@@ -85,8 +81,7 @@ namespace BlogApp1.Server.Services
         }
 
         // Sparse retrieval (BM25 placeholder)
-        private async Task<List<RagChunkResult>>
-            SparseSearch(string query)
+        private async Task<List<RagChunkResult>> SparseSearch(string query)
         {
             // Later integrate Elastic/Lucene
             await Task.Delay(1);
@@ -95,10 +90,7 @@ namespace BlogApp1.Server.Services
         }
 
         // Merge dense + sparse
-        private List<RagChunkResult>
-            MergeResults(
-                List<RagChunkResult> dense,
-                List<RagChunkResult> sparse)
+        private List<RagChunkResult> MergeResults(List<RagChunkResult> dense,List<RagChunkResult> sparse)
         {
             return dense
                 .Concat(sparse)

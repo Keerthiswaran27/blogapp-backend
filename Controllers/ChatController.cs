@@ -33,7 +33,7 @@ namespace BlogApp1.Server.Controllers
                     question,
                     queryVector);
 
-            // 3. Call LLM
+            //// 3. Call LLM
             var answer =
                 await _llmService.GenerateAnswer(
                     question,

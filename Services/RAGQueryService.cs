@@ -18,7 +18,7 @@
                 var queryEmbedding = await GetEmbeddingAsync(request.Question);
 
                 var searchResults = await _qdrantClient.SearchAsync(
-                    collectionName: "blog_chunks",
+                    collectionName: "rag_blog_chunks",
                     vector: queryEmbedding.ToArray(),
                     limit: 5
                 );
